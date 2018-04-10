@@ -46,10 +46,6 @@ class MapsView extends ViewGroup implements MapView {
         init();
     }
 
-    public String test(String text) {
-        return "Das wärs mit MapView: " + text;
-    }
-
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
 
