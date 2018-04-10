@@ -16,7 +16,7 @@ public class MapLayout extends LinearLayout {
     }
 
     public String testNeu(String text) {
-        return "Das wärs mit MapLayout 2: " + text;
+        return "Das wärs mit MapLayout und MapsView: " + text;
     }
 
     MapsView mapView;
