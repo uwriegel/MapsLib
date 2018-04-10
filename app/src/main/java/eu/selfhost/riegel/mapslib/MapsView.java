@@ -1,6 +1,7 @@
 package eu.selfhost.riegel.mapslib;
 
 import android.content.Context;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.ViewDebug;
@@ -44,6 +45,23 @@ class MapsView extends ViewGroup implements MapView {
     public MapsView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
+    }
+
+    public void onCenter() {
+        setter.changeValue(true);
+    }
+
+    public void onDoubleTab() {
+        setter.onDoubleTab();
+    }
+
+    public void onMove() {
+        setter.changeValue(false);
+    }
+
+    @Override
+    protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
+        return p instanceof MapsView.LayoutParams;
     }
 
     @Override
@@ -148,6 +166,10 @@ class MapsView extends ViewGroup implements MapView {
 
     }
 
+    public void setLocationSetter(LocationSetter setter) {
+        this.setter = setter;
+    }
+
     void init() {
         layoutHandler = new Handler() {
             @Override
@@ -194,6 +216,38 @@ class MapsView extends ViewGroup implements MapView {
         //model.mapViewPosition.addObserver(this);
     }
 
+    enum Alignment {
+        TOP_LEFT, TOP_CENTER, TOP_RIGHT, CENTER_LEFT, CENTER, CENTER_RIGHT, BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT
+    }
+
+    class LayoutParams extends ViewGroup.LayoutParams
+    {
+        public LayoutParams(Context c, AttributeSet attrs) {
+            super(c, attrs);
+            alignment = Alignment.BOTTOM_CENTER;
+        }
+
+        /**
+         * Creates a new set of layout parameters for a child view of MapView.
+         * @param width     the width of the child, either [.MATCH_PARENT], [.WRAP_CONTENT] or a fixed size in pixels.
+         * @param height    the height of the child, either [.MATCH_PARENT], [.WRAP_CONTENT] or a fixed size in pixels.
+         * @param latLong   the location of the child within the map view.
+         * @param alignment the alignment of the view compared to the location.
+         */
+        public LayoutParams(int width, int height, LatLong latLong, Alignment alignment) {
+            super(width, height);
+            this.latLong = latLong;
+            this.alignment = alignment;
+        }
+
+        public LayoutParams(ViewGroup.LayoutParams source) {
+            super(source);
+        }
+
+        LatLong latLong;
+        Alignment alignment;
+    }
+
     private static AndroidGraphicFactory GRAPHIC_FACTORY = AndroidGraphicFactory.INSTANCE;
     private Model model;
     private LayerManager layerManager;
@@ -205,4 +259,6 @@ class MapsView extends ViewGroup implements MapView {
     private Handler layoutHandler;
     private MapScaleBar mapScaleBar;
     private MapViewProjection mapViewProjection;
+    private TouchGestureHandler touchGestureHandler;
+    private LocationSetter setter;
 }
